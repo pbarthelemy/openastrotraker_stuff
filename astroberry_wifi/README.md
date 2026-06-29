@@ -24,9 +24,9 @@ The dialog-based version is a cuter version, which requires dependencies not ins
 Astroberry is an astronomy-focused Raspberry Pi distribution built on Raspbian.
 It runs a permanent WiFi access point on the built-in wireless chip so that
 clients (laptops, phones) can connect to KStars/Ekos without any external
-network infrastructure. The goal of this project is to add internet access
-through a USB WiFi dongle while keeping that AP running at all times, and to
-expose all management through a terminal user interface usable over SSH.
+network infrastructure. 
+
+**The goal of this project is to add internet access through a USB WiFi dongle while keeping that AP running at all times, and to expose all management through a terminal user interface usable over SSH.**
 
 ---
 
