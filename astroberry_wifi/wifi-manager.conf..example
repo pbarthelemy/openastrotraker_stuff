@@ -1,0 +1,168 @@
+# =============================================================================
+# wifi-manager.conf — configuration for wifi-manager-nodialog.sh
+# =============================================================================
+#
+# WHAT THIS FILE IS
+# -----------------
+# This file configures the pure-bash WiFi manager (wifi-manager-nodialog.sh).
+# Every setting below is OPTIONAL: the script ships with sensible built-in
+# defaults and runs perfectly well with no config file at all. Use this file
+# only to override the defaults you care about.
+#
+# WHERE TO PUT IT
+# ---------------
+# The script looks for its config in this order:
+#   1. The path given on the command line:   sudo ./wifi-manager-nodialog.sh -c /path/to/file
+#   2. The WIFI_MANAGER_CONF environment variable
+#   3. /etc/wifi-manager.conf   (the default)
+#
+# To install this template as the active config:
+#   sudo cp wifi-manager.conf.example /etc/wifi-manager.conf
+#   sudo chown root:root /etc/wifi-manager.conf
+#   sudo chmod 644 /etc/wifi-manager.conf      # or 600 to hide it from other users
+#   sudo nano /etc/wifi-manager.conf           # edit to taste
+#
+# HOW IT IS READ (IMPORTANT — SECURITY)
+# -------------------------------------
+# This file is *sourced* as a bash script. That makes it flexible (you can use
+# shell expressions if you want) but also means it can run arbitrary commands.
+# For that reason the script REFUSES to load it unless BOTH are true:
+#   * it is owned by root (uid 0), and
+#   * it is NOT writable by group or "other" (i.e. permissions like 644 or 600).
+# If either check fails the script aborts with an explanatory message. This
+# prevents an unprivileged user from injecting commands that would run as root.
+#
+# SYNTAX
+# ------
+# Plain  KEY="value"  lines. Quote values that contain spaces. Lines starting
+# with '#' are comments. Do not put a space around the '=' sign.
+#
+# APPLYING CHANGES
+# ----------------
+# Changes take effect the next time you start the script. There is no need to
+# restart any service just to re-read this file.
+#
+# =============================================================================
+# INTERFACE NAMES
+# =============================================================================
+#
+# IFACE_AP     — the interface kept in access-point mode (your built-in Pi WiFi,
+#                running hostapd). This is the Astroberry hotspot. Default: wlan0
+# IFACE_CLIENT — the interface used as a WiFi client to reach the internet
+#                (normally your USB dongle). Default: wlan1
+#
+# Change these only if your interfaces come up under different names. Tip: run
+#   ip link            (to list interface names)
+#   ls -l /sys/class/net/<name>/device   (USB path => dongle; mmc/sdio => built-in)
+# They must be different from each other.
+#
+#IFACE_AP="wlan0"
+#IFACE_CLIENT="wlan1"
+
+# =============================================================================
+# WIFI CLIENT BEHAVIOUR
+# =============================================================================
+#
+# WIFI_COUNTRY — 2-letter ISO 3166 country code for the regulatory domain. This
+#                is written into the generated wpa_supplicant file the first
+#                time the client config is created. Set it to YOUR country so
+#                the correct channels/power limits are used. Default: CA (Canada)
+#                Examples: US, GB, FR, DE, JP, AU …
+#
+#WIFI_COUNTRY="CA"
+#
+# WPA_DRIVER   — the wpa_supplicant -D driver string. The default works for
+#                virtually all modern adapters; leave it unless you know you
+#                need something else. Default: nl80211,wext
+#
+#WPA_DRIVER="nl80211,wext"
+#
+# CONNECT_TIMEOUT — how many seconds to wait for the client to associate with a
+#                   network before reporting failure. Default: 15
+#
+#CONNECT_TIMEOUT="15"
+
+# =============================================================================
+# ROUTING PRIORITY (METRICS)
+# =============================================================================
+#
+# When both interfaces have a default route, the one with the LOWER metric wins
+# and carries internet traffic. These are the values applied when you choose the
+# "recommended preset" on the metric screen, and the defaults shown when you
+# enter custom values.
+#
+# DEFAULT_METRIC_CLIENT should be LOWER than DEFAULT_METRIC_AP so the dongle is
+# the preferred internet path. Both must be positive integers.
+#
+#DEFAULT_METRIC_AP="300"
+#DEFAULT_METRIC_CLIENT="200"
+
+# =============================================================================
+# INTERNET SHARING (NAT)
+# =============================================================================
+#
+# ENABLE_NAT — whether the script sets up NAT/masquerading so that clients
+#              connected to the AP (on IFACE_AP) can reach the internet through
+#              IFACE_CLIENT. Set to "no" if you only want the Pi itself online
+#              and do NOT want to route the hotspot's clients out to the internet
+#              (e.g. for a closed observing-field network). Default: yes
+#              Allowed values: yes | no
+#
+#ENABLE_NAT="yes"
+
+# =============================================================================
+# USER INTERFACE
+# =============================================================================
+#
+# DEFAULT_LANG — interface language.
+#                  ask : show the language picker at startup (default)
+#                  en  : always start in English, skip the picker
+#                  fr  : always start in French, skip the picker
+#
+#DEFAULT_LANG="ask"
+
+# =============================================================================
+# FILE PATHS (advanced — most users never change these)
+# =============================================================================
+#
+# WPA_CONF_DIR    — directory holding per-interface wpa_supplicant files.
+#                   Default: /etc/wpa_supplicant
+# WPA_CONF_CLIENT — full path to the client's wpa_supplicant file. Leave EMPTY
+#                   ("") to auto-derive it as:
+#                     ${WPA_CONF_DIR}/wpa_supplicant-${IFACE_CLIENT}.conf
+# WPA_PID_CLIENT  — PID file for the client's wpa_supplicant process. Leave EMPTY
+#                   ("") to auto-derive it as:
+#                     /var/run/wpa_supplicant_${IFACE_CLIENT}.pid
+# DHCPCD_CONF     — path to dhcpcd.conf (where metric stanzas are written).
+#                   Default: /etc/dhcpcd.conf
+# UDEV_RULES      — path to the persistent-naming udev rule the script writes.
+#                   Default: /etc/udev/rules.d/70-persistent-wifi.rules
+# LOG_FILE        — operational log. Default: /var/log/wifi-manager.log
+# LOCK_FILE       — single-instance lock. Default: /var/run/wifi-manager.lock
+#
+#WPA_CONF_DIR="/etc/wpa_supplicant"
+#WPA_CONF_CLIENT=""
+#WPA_PID_CLIENT=""
+#DHCPCD_CONF="/etc/dhcpcd.conf"
+#UDEV_RULES="/etc/udev/rules.d/70-persistent-wifi.rules"
+#LOG_FILE="/var/log/wifi-manager.log"
+#LOCK_FILE="/var/run/wifi-manager.lock"
+
+# =============================================================================
+# EXAMPLE: a complete, non-default setup
+# =============================================================================
+#
+# Scenario: a Pi 5 in France whose USB dongle enumerates as "wlxAABBCC" and
+# whose built-in chip is "wlan0". We want English UI, NAT on, and the dongle
+# strongly preferred for internet.
+#
+#   IFACE_AP="wlan0"
+#   IFACE_CLIENT="wlxAABBCC"
+#   WIFI_COUNTRY="FR"
+#   DEFAULT_LANG="en"
+#   ENABLE_NAT="yes"
+#   DEFAULT_METRIC_AP="400"
+#   DEFAULT_METRIC_CLIENT="100"
+#
+# (Uncomment and adapt the lines above in a real /etc/wifi-manager.conf.)
+# =============================================================================
