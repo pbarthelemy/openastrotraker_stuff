@@ -7,8 +7,8 @@
 ## 0. Quick Start
 
 1. Copy `wifi-manager-nodialog.sh` on the astroberry.
-2. make the script executable: `chmod +x wifi-manager-nodialog.sh`
-3. `sudo bash ~/wifi-manager-nodialog.sh`
+2. make the script executable: `chmod +x ./wifi-manager-nodialog.sh`
+3. `sudo bash ./wifi-manager-nodialog.sh`
 
 The motto is: _It Worked On My PC (and it is AI-generated)_ ... Feedback is welcomed !
 
