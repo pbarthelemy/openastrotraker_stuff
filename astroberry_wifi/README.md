@@ -192,52 +192,42 @@ tail -f /var/log/wifi-manager.log
 
 ---
 
-## 2.5 Offline installation of dialog (upcoming)
+## 2.5 Install Dialog version (a cute TUI)
 
-> ⚠️ **Coming soon:** A helper script for installing `dialog` and its
-> dependencies entirely offline (no internet connection required on the Pi) is
-> currently in development. It will pre-bundle the correct `.deb` packages for
-> the Pi's architecture (armhf / arm64) and Raspbian release, and handle
-> installation via `dpkg` with a single command — making `wifi-manager.sh` fully
-> deployable in field conditions without any network access.
->
-> In the meantime, if you need to run the dialog version offline, see the manual
-> procedure below.
+> **Note:** The Dialog-based version (`wifi-manager.sh`) provides the exact same
+> features as the no-dialog version. The only difference is a beauti-ful TUI —
+> bordered ncurses-style windows rendered by `dialog` instead of plain ANSI
+> escape sequences.
 
-### Manual offline installation of dialog
+Two sets of pre-downloaded packages are included in this repository for offline
+installation of `dialog` and `iw` on Astroberry without any internet access on
+the Pi.
 
-`dialog`'s dependency tree on Raspbian is shallow — `libc6`, `libncursesw6`,
-`libtinfo6`, and `debianutils` are all present on any Astroberry image, so in
-practice only the `dialog` `.deb` itself needs to be transferred.
+### Method 1 — `dialog-offline/` (dpkg, works on a clean Astroberry install)
 
-**Step 1 — Check your Pi's architecture and OS release:**
+The `dialog-offline/` folder contains the required `.deb` files. Install them
+directly with `dpkg`:
 
 ```bash
-dpkg --print-architecture          # → armhf  (Pi 4 32-bit) or arm64 (Pi 4/5 64-bit)
-cat /etc/os-release | grep VERSION_CODENAME   # → bookworm  or  bullseye
+cd astroberry_wifi/dialog-offline
+sudo dpkg -i *.deb
 ```
 
-**Step 2 — Download the correct `.deb` on any internet-connected machine:**
+This method works from a clean Astroberry install with no additional tools
+required.
+
+### Method 2 — `apt-offline/` (apt-offline bundle)
+
+The `apt-offline/` folder contains a `dialog-bundle.zip` file prepared with
+`apt-offline`. Install it with:
 
 ```bash
-# Example for armhf / bookworm — adjust arch and version as needed.
-# Find the exact filename at: https://packages.debian.org/dialog
-wget http://deb.debian.org/debian/pool/main/d/dialog/dialog_1.3-20240101-1_armhf.deb
+sudo apt-offline install astroberry_wifi/apt-offline/dialog-bundle.zip
 ```
 
-**Step 3 — Copy to the Pi and install:**
-
-```bash
-# Copy via USB stick or temporary SSH/SCP:
-scp dialog_*.deb astroberry@astroberry.local:~/
-
-# On the Pi:
-sudo dpkg -i dialog_*.deb
-```
-
-Repeat for `iw` if needed (same procedure from
-`https://packages.debian.org/iw`). The offline-install helper script will
-automate all of these steps.
+> **Note:** Although this method is cleaner (it goes through the full `apt`
+> machinery), it requires the `apt-offline` package — which is **not** included
+> by default on Astroberry. Use Method 1 if starting from a stock image.
 
 ---
 
