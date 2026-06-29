@@ -13,7 +13,9 @@
 
 The motto is: _It Worked On My PC (and it is AI-generated)_ ... Feedback is welcomed !
 
-The dialog-based version is a cuter version, which requires dependencies no installed by default on astroberry for RPi. You can use the nodialog version with no loss of fucntionality. 
+The dialog-based version is a cuter version, which requires dependencies not installed by default on Astroberry for Raspberry Pi 4|5: you will need to go online and install _dialog_, a TUI library.
+
+ You can use the nodialog version with no loss of functionality. 
 
 ---
 
